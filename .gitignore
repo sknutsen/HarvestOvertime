@@ -1,4 +1,5 @@
 # Binaries for programs and plugins
+*.tar.xz
 *.exe
 *.exe~
 *.dll
@@ -13,3 +14,4 @@ appsettings.json
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+fyne-cross/
