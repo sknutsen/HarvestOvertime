@@ -24,6 +24,7 @@ func CreateMainForm(client *http.Client, window fyne.Window) *fyne.Container {
 	title.TextSize = 24
 
 	hoursText := widget.NewLabel("")
+	hoursText.Alignment = fyne.TextAlignCenter
 	hoursText.Wrapping = fyne.TextWrapWord
 
 	button := widget.NewButton(constants.GetHoursButtonText, func() {
@@ -42,8 +43,8 @@ func CreateMainForm(client *http.Client, window fyne.Window) *fyne.Container {
 		hoursText.SetText(hours + " hours of overtime")
 	})
 
-	hbox := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), button, layout.NewSpacer())
-	vbox := container.New(layout.NewVBoxLayout(), title, hbox, widget.NewSeparator(), hoursText)
+	hboxButton := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), button, layout.NewSpacer())
+	vbox := container.New(layout.NewVBoxLayout(), title, hboxButton, widget.NewSeparator(), hoursText)
 
 	return vbox
 }

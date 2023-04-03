@@ -1,24 +1,31 @@
 package logic
 
 import (
-	"HarvestOvertime/logic/models"
-
 	"github.com/spf13/viper"
 )
 
-func ReadDetailsFromFile() (string, string, error) {
+func InitSettingsFromFile() (AppSettings, error) {
+	var settings AppSettings
+
+	err := settings.ReadDetailsFromFile()
+
+	return settings, err
+}
+
+func (settings *AppSettings) ReadDetailsFromFile() error {
 	var vp *viper.Viper = GetViperConfig()
-	var appSettings models.AppSettings
 
 	err := vp.ReadInConfig()
 	if err != nil {
-		return "", "", err
+		err = settings.SaveDetailsToFile()
+
+		return err
 	}
 
-	err = vp.Unmarshal(&appSettings)
+	err = vp.Unmarshal(&settings)
 	if err != nil {
-		return "", "", err
+		return err
 	}
 
-	return appSettings.AccountId, appSettings.AccessToken, nil
+	return nil
 }

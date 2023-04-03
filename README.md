@@ -15,9 +15,9 @@
 3. Install fyne-cross
     - ```go install github.com/fyne-io/fyne-cross@latest```
 4. Compile project
-    - ```fyne cross darwin -arch=amd64``` For mac x86
-    - ```fyne cross linux -arch=amd64``` For linux x86
-    - ```fyne cross windows -arch=amd64``` For windows x86
+    - ```fyne-cross darwin -arch=amd64``` For mac x86
+    - ```fyne-cross linux -arch=amd64``` For linux x86
+    - ```fyne-cross windows -arch=amd64``` For windows x86
 5. Grab executable from fyne-cross/bin or fyne-cross/dist
 
 

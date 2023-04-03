@@ -20,7 +20,15 @@ var SelectedTask models.Task
 
 // var data = []string{"a", "string", "list"}
 
-func CreateTaskSetupForm(client *http.Client, window fyne.Window) *fyne.Container {
+func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObject {
+	settings, err := logic.InitSettingsFromFile()
+	if err != nil {
+		println(err.Error())
+	}
+
+	Tasks = settings.TimeOffTasks
+	SelectedTasks = settings.TimeOffTasks
+
 	taskSelect := widget.NewList(
 		func() int {
 			return len(Tasks)
@@ -49,8 +57,6 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) *fyne.Containe
 		},
 	)
 
-	list.Resize(fyne.NewSize(400, list.Size().Height))
-
 	getTasksButton := widget.NewButton(constants.GetTasksButtonText, func() {
 		newTasks, err := logic.ListTasks(client)
 		if err != nil {
@@ -63,20 +69,43 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) *fyne.Containe
 	})
 
 	addSelectedButton := widget.NewButton(constants.AddSelectedButtonText, func() {
+		settings, err := logic.InitSettingsFromFile()
+		if err != nil {
+			println(err.Error())
+		}
+
 		SelectedTasks = append(SelectedTasks, SelectedTask)
+
+		settings.TimeOffTasks = SelectedTasks
+		err = settings.SaveDetailsToFile()
+		if err != nil {
+			println(err.Error())
+		}
 
 		list.Refresh()
 	})
 
 	clearSelectedButton := widget.NewButton(constants.ClearSelectedButtonText, func() {
+		settings, err := logic.InitSettingsFromFile()
+		if err != nil {
+			println(err.Error())
+		}
+
 		SelectedTasks = []models.Task{}
+
+		settings.TimeOffTasks = SelectedTasks
+		err = settings.SaveDetailsToFile()
+		if err != nil {
+			println(err.Error())
+		}
 
 		list.Refresh()
 	})
 
-	hbox := container.New(layout.NewHBoxLayout(), addSelectedButton, clearSelectedButton)
-	vbox := container.New(layout.NewVBoxLayout(), getTasksButton, taskSelect, hbox)
-	form := container.New(layout.NewHBoxLayout(), list, vbox)
+	hbox := container.New(layout.NewHBoxLayout(), getTasksButton, addSelectedButton, clearSelectedButton)
+	borderLayout := container.NewBorder(hbox, nil, nil, nil, taskSelect)
+
+	form := container.NewHSplit(list, borderLayout)
 
 	return form
 }

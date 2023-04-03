@@ -1,7 +1,7 @@
 package constants
 
 const AddSelectedButtonText string = "Add selected"
-const ClearSelectedButtonText string = "Clear selected"
+const ClearSelectedButtonText string = "Clear"
 const GetHoursButtonText string = "Get hours"
 const GetTasksButtonText string = "Get tasks"
 const MainTabText string = "Main"

@@ -10,17 +10,19 @@ func GetTotalOvertime(entries models.TimeEntries) float64 {
 	var overtime float64 = 0.0
 	var dates []string = []string{}
 
-	for i := 0; i < len(entries.TimeEntries); i++ {
-		sum = entries.TimeEntries[i].Hours + sum
+	filteredList := filterTimeOff(entries)
 
-		dates = appendDate(dates, entries.TimeEntries[i].SpentDate)
+	for i := 0; i < len(filteredList); i++ {
+		sum = filteredList[i].Hours + sum
+
+		dates = appendDate(dates, filteredList[i].SpentDate)
 	}
 
 	fmt.Printf("Number of dates: %d\n", len(dates))
 
 	overtime = sum - (float64(len(dates)) * 7.5)
 
-	return overtime
+	return addCarryOver(overtime)
 }
 
 func appendDate(dates []string, date string) []string {
@@ -38,4 +40,39 @@ func appendDate(dates []string, date string) []string {
 	}
 
 	return dates
+}
+
+func addCarryOver(overtime float64) float64 {
+	settings, err := InitSettingsFromFile()
+	if err != nil {
+		return overtime
+	}
+
+	return overtime + settings.CarryOverTime
+}
+
+func filterTimeOff(entries models.TimeEntries) []models.TimeEntry {
+	var filteredList []models.TimeEntry = []models.TimeEntry{}
+
+	settings, err := InitSettingsFromFile()
+	if err != nil {
+		return entries.TimeEntries
+	}
+
+	for i := 0; i < len(entries.TimeEntries); i++ {
+		exists := false
+
+		for j := 0; j < len(settings.TimeOffTasks); j++ {
+			if entries.TimeEntries[i].Task.Id == settings.TimeOffTasks[j].Id {
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
+			filteredList = append(filteredList, entries.TimeEntries[i])
+		}
+	}
+
+	return filteredList
 }

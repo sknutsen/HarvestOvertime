@@ -2,14 +2,16 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"HarvestOvertime/logic/models"
 )
 
 func ListEntries(client *http.Client) (models.TimeEntries, error) {
 	var entries models.TimeEntries
-	var url string = "https://api.harvestapp.com/api/v2/time_entries"
+	var url string = fmt.Sprintf("https://api.harvestapp.com/api/v2/time_entries?from=%d-01-01", time.Now().Year())
 	var counter int32 = 0
 
 	for url != "" {
@@ -38,13 +40,13 @@ func listEntries(client *http.Client, url string) (models.TimeEntries, error) {
 		return models.TimeEntries{}, err
 	}
 
-	id, token, err := ReadDetailsFromFile()
+	settings, err := InitSettingsFromFile()
 	if err != nil {
 		println("Error reading settings: " + err.Error())
 	}
 
-	req.Header.Add("Harvest-Account-ID", id)
-	req.Header.Add("Authorization", "Bearer "+token)
+	req.Header.Add("Harvest-Account-ID", settings.AccountId)
+	req.Header.Add("Authorization", "Bearer "+settings.AccessToken)
 	req.Header.Add("User-Agent", "Harvest API Example")
 
 	resp, err := client.Do(req)
