@@ -57,13 +57,6 @@ func listEntries(client *http.Client, url string) (models.TimeEntries, error) {
 
 	defer resp.Body.Close()
 
-	// content, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	println(err.Error())
-	// }
-
-	// println(string(content))
-
 	err = json.NewDecoder(resp.Body).Decode(&entries)
 	if err != nil {
 		println("Error decoding response: " + err.Error())

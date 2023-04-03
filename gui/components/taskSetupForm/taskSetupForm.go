@@ -1,4 +1,4 @@
-package tasksetupform
+package taskSetupForm
 
 import (
 	"HarvestOvertime/constants"

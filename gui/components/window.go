@@ -4,7 +4,7 @@ import (
 	"HarvestOvertime/constants"
 	"HarvestOvertime/gui/components/mainForm"
 	"HarvestOvertime/gui/components/settingsForm"
-	tasksetupform "HarvestOvertime/gui/components/taskSetupForm"
+	"HarvestOvertime/gui/components/taskSetupForm"
 	"net/http"
 
 	"fyne.io/fyne/v2"
@@ -17,7 +17,7 @@ func CreateWindow(client *http.Client, app fyne.App) fyne.Window {
 
 	mainForm := mainForm.CreateMainForm(client, win)
 
-	taskSetupForm := tasksetupform.CreateTaskSetupForm(client, win)
+	taskSetupForm := taskSetupForm.CreateTaskSetupForm(client, win)
 
 	settingsForm := settingsForm.CreateSettingsForm(win)
 
