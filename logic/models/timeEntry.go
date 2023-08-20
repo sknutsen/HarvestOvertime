@@ -1,7 +1,7 @@
 package models
 
 type TimeEntry struct {
-	Id           int32   `json:"id"`
+	Id           uint64	 `json:"id"`
 	SpentDate    string  `json:"spent_date"`
 	Project      Project `json:"project"`
 	Task         Task    `json:"task"`

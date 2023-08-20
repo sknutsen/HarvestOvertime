@@ -8,9 +8,9 @@ import (
 
 func ListTasks(client *http.Client) ([]models.Task, error) {
 	var tasks []models.Task
-	var counter int32 = 0
+	var counter uint64 = 0
 
-	var m = make(map[int32]models.Task)
+	var m = make(map[uint64]models.Task)
 	newEntries, err := ListEntries(client)
 	if err == nil {
 		for _, e := range newEntries.TimeEntries {
