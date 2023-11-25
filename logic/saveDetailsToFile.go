@@ -4,16 +4,17 @@ import (
 	"bufio"
 	"os"
 
+	"github.com/sknutsen/harvestovertimelib/models"
 	"github.com/spf13/viper"
 )
 
-func (settings *AppSettings) SaveDetailsToFile() error {
+func SaveDetailsToFile(settings models.Settings) error {
 	var vp *viper.Viper = GetViperConfig()
 
 	vp.Set("accessToken", settings.AccessToken)
 	vp.Set("accountId", settings.AccountId)
 	vp.Set("carryOverTime", settings.CarryOverTime)
-	vp.Set("currentYear", settings.CurrentYear)
+	vp.Set("currentYear", settings.OnlyCurrentYear)
 	vp.Set("timeOffTasks", settings.TimeOffTasks)
 
 	err := vp.WriteConfig()
@@ -31,7 +32,7 @@ func (settings *AppSettings) SaveDetailsToFile() error {
 			return err
 		}
 
-		return settings.SaveDetailsToFile()
+		return SaveDetailsToFile(settings)
 	}
 
 	return nil

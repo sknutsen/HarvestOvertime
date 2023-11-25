@@ -13,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"github.com/sknutsen/harvestovertimelib"
 )
 
 func CreateMainForm(client *http.Client, window fyne.Window) *fyne.Container {
@@ -28,7 +29,14 @@ func CreateMainForm(client *http.Client, window fyne.Window) *fyne.Container {
 	hoursText.Wrapping = fyne.TextWrapWord
 
 	button := widget.NewButton(constants.GetHoursButtonText, func() {
-		entries, err := logic.ListEntries(client)
+		settings, err := logic.ReadDetailsFromFile()
+		if err != nil {
+			println("Error: " + err.Error())
+
+			dialog.ShowError(err, window)
+		}
+
+		entries, err := harvestovertimelib.ListEntries(client, settings)
 		if err != nil {
 			println("Error: " + err.Error())
 
@@ -37,7 +45,7 @@ func CreateMainForm(client *http.Client, window fyne.Window) *fyne.Container {
 
 		fmt.Printf("Number of entries: %d\n", len(entries.TimeEntries))
 
-		hours := fmt.Sprint(logic.GetTotalOvertime(entries))
+		hours := fmt.Sprint(harvestovertimelib.GetTotalOvertime(entries, settings))
 		fmt.Printf("Overtime: %s\n", hours)
 
 		hoursText.SetText(hours + " hours of overtime")

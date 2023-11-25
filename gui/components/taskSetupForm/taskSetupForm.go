@@ -3,7 +3,7 @@ package taskSetupForm
 import (
 	"HarvestOvertime/constants"
 	"HarvestOvertime/logic"
-	"HarvestOvertime/logic/models"
+
 	"net/http"
 
 	"fyne.io/fyne/v2"
@@ -11,6 +11,8 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"github.com/sknutsen/harvestovertimelib"
+	"github.com/sknutsen/harvestovertimelib/models"
 )
 
 var Tasks []models.Task = []models.Task{}
@@ -18,10 +20,8 @@ var SelectedTasks []models.Task = []models.Task{}
 
 var SelectedTask models.Task
 
-// var data = []string{"a", "string", "list"}
-
 func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObject {
-	settings, err := logic.InitSettingsFromFile()
+	settings, err := logic.ReadDetailsFromFile()
 	if err != nil {
 		println(err.Error())
 	}
@@ -58,7 +58,12 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObj
 	)
 
 	getTasksButton := widget.NewButton(constants.GetTasksButtonText, func() {
-		newTasks, err := logic.ListTasks(client)
+		settings, err := logic.ReadDetailsFromFile()
+		if err != nil {
+			println(err.Error())
+		}
+
+		newTasks, err := harvestovertimelib.ListTasks(client, settings)
 		if err != nil {
 			dialog.ShowError(err, window)
 		}
@@ -69,7 +74,7 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObj
 	})
 
 	addSelectedButton := widget.NewButton(constants.AddSelectedButtonText, func() {
-		settings, err := logic.InitSettingsFromFile()
+		settings, err := logic.ReadDetailsFromFile()
 		if err != nil {
 			println(err.Error())
 		}
@@ -77,7 +82,7 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObj
 		SelectedTasks = append(SelectedTasks, SelectedTask)
 
 		settings.TimeOffTasks = SelectedTasks
-		err = settings.SaveDetailsToFile()
+		err = logic.SaveDetailsToFile(settings)
 		if err != nil {
 			println(err.Error())
 		}
@@ -86,7 +91,7 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObj
 	})
 
 	clearSelectedButton := widget.NewButton(constants.ClearSelectedButtonText, func() {
-		settings, err := logic.InitSettingsFromFile()
+		settings, err := logic.ReadDetailsFromFile()
 		if err != nil {
 			println(err.Error())
 		}
@@ -94,7 +99,7 @@ func CreateTaskSetupForm(client *http.Client, window fyne.Window) fyne.CanvasObj
 		SelectedTasks = []models.Task{}
 
 		settings.TimeOffTasks = SelectedTasks
-		err = settings.SaveDetailsToFile()
+		err = logic.SaveDetailsToFile(settings)
 		if err != nil {
 			println(err.Error())
 		}

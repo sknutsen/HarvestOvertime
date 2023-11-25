@@ -9,10 +9,11 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"github.com/sknutsen/harvestovertimelib/models"
 )
 
 func CreateSettingsForm(window fyne.Window) *fyne.Container {
-	var appSettings logic.AppSettings
+	var appSettings models.Settings
 
 	accountIdInput := widget.NewEntry()
 	accountIdInput.SetPlaceHolder("Enter Harvest account ID...")
@@ -20,7 +21,7 @@ func CreateSettingsForm(window fyne.Window) *fyne.Container {
 	accessTokenInput := widget.NewEntry()
 	accessTokenInput.SetPlaceHolder("Enter Harvest access token...")
 
-	err := appSettings.ReadDetailsFromFile()
+	appSettings, err := logic.ReadDetailsFromFile()
 	if err != nil {
 		dialog.ShowError(err, window)
 	} else {
@@ -29,7 +30,7 @@ func CreateSettingsForm(window fyne.Window) *fyne.Container {
 	}
 
 	button := widget.NewButton(constants.SaveDetailsButtonText, func() {
-		updatedAppSettings, err := logic.InitSettingsFromFile()
+		updatedAppSettings, err := logic.ReadDetailsFromFile()
 		if err != nil {
 			dialog.ShowError(err, window)
 		}
@@ -37,7 +38,7 @@ func CreateSettingsForm(window fyne.Window) *fyne.Container {
 		updatedAppSettings.AccessToken = accessTokenInput.Text
 		updatedAppSettings.AccountId = accountIdInput.Text
 
-		err = updatedAppSettings.SaveDetailsToFile()
+		err = logic.SaveDetailsToFile(updatedAppSettings)
 		if err != nil {
 			dialog.ShowError(err, window)
 		}

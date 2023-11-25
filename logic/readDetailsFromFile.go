@@ -1,31 +1,25 @@
 package logic
 
 import (
+	"github.com/sknutsen/harvestovertimelib/models"
 	"github.com/spf13/viper"
 )
 
-func InitSettingsFromFile() (AppSettings, error) {
-	var settings AppSettings
-
-	err := settings.ReadDetailsFromFile()
-
-	return settings, err
-}
-
-func (settings *AppSettings) ReadDetailsFromFile() error {
+func ReadDetailsFromFile() (models.Settings, error) {
+	var settings models.Settings
 	var vp *viper.Viper = GetViperConfig()
 
 	err := vp.ReadInConfig()
 	if err != nil {
-		err = settings.SaveDetailsToFile()
+		err = SaveDetailsToFile(settings)
 
-		return err
+		return models.Settings{}, err
 	}
 
 	err = vp.Unmarshal(&settings)
 	if err != nil {
-		return err
+		return models.Settings{}, err
 	}
 
-	return nil
+	return settings, nil
 }
